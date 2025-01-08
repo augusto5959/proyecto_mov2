@@ -1,144 +1,139 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { getDatabase, ref, set } from "firebase/database";
+import App from '../App';
+import { db } from '../config/Config';
+export default function RegisterScreen() {
+	const [cedula, setCedula] = useState('');
+	const [nombre, setNombre] = useState('');
+	const [apellido, setApellido] = useState('');
+	const [edad, setEdad] = useState(0);
+	const [genero, setGenero] = useState('');
+	const [correo, setCorreo] = useState('');
+	const [estado, setEstado] = useState('');
+	function guardar() {
+		set(ref(db, 'usuarios/' + cedula), {
+			name: nombre,
+			lastname: apellido,
+			age: edad,
+			gender: genero,
+			email: correo,
+			state: estado,
+		});
+		limpiar();
+	}
+	function limpiar() {
+		setCedula('');
+		setNombre('');
+		setApellido('');
+		setEdad(0);
+		setGenero('');
+		setCorreo('');
+		setEstado('');
+	}
+	return (
+		<View style={styles.container}>
+			<Text style={styles.title}>Registros</Text>
 
-export default function RegisterScreen({ navigation }: { navigation: any }) {
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-  const [age, setAge] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+			<TextInput
+				placeholder="Ingresar Cédula"
+				style={styles.inp}
+				value={cedula}
+				onChangeText={(texto) => setCedula(texto)}
+			/>
+			<TextInput
+				placeholder="Ingrese el Nombre"
+				style={styles.inp}
+				value={nombre}
+				onChangeText={(texto) => setNombre(texto)}
+			/>
+			<TextInput
+				placeholder="Ingrese el Apellido"
+				style={styles.inp}
+				value={apellido}
+				onChangeText={(texto) => setApellido(texto)}
+			/>
+			<TextInput
+				placeholder="Ingrese la Edad"
+				style={styles.inp}
+				value={edad?.toString()}
+				keyboardType="numeric"
+				onChangeText={(texto) => setEdad(+texto)}
+			/>
 
-  const handleRegister = () => {
-    if (!name || !username || !age || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Por favor completa todos los campos');
-      return;
-    }
+			<View style={styles.piccon}>
+				<Text style={styles.subtitulo}>Seleccione el Género</Text>
+				<Picker
+					selectedValue={genero}
+					style={styles.picker}
+					onValueChange={(itemValue) => setGenero(itemValue)}
+				>
+					<Picker.Item label="Seleccione..." value="" />
+					<Picker.Item label="Masculino" value="Masculino" />
+					<Picker.Item label="Femenino" value="Femenino" />
+					<Picker.Item label="Otro" value="Otro" />
+				</Picker>
+			</View>
 
-    if (isNaN(Number(age)) || Number(age) <= 0) {
-      Alert.alert('Error', 'Por favor ingresa una edad válida');
-      return;
-    }
+			<TextInput
+				placeholder="Ingrese el Correo Electrónico"
+				style={styles.inp}
+				value={correo}
+				onChangeText={(texto) => setCorreo(texto)}
+			/>
 
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Las contraseñas no coinciden');
-      return;
-    }
-
-    Alert.alert('Éxito', '¡Registro completado!');
-    navigation.navigate('Login'); 
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Crear Cuenta</Text>
-
-      
-      <TextInput
-        placeholder="Nombre completo"
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-      />
-
-      
-      <TextInput
-        placeholder="Nombre de usuario"
-        style={styles.input}
-        value={username}
-        onChangeText={setUsername}
-      />
-
-      
-      <TextInput
-        placeholder="Edad"
-        style={styles.input}
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-      />
-
-      
-      <TextInput
-        placeholder="Correo electrónico"
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-
-      
-      <TextInput
-        placeholder="Contraseña"
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      
-      <TextInput
-        placeholder="Confirmar contraseña"
-        style={styles.input}
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
-
-     
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerButtonText}>Registrarse</Text>
-      </TouchableOpacity>
-
-      
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.footerText}>¿Ya tienes una cuenta? Inicia sesión aquí</Text>
-      </TouchableOpacity>
-    </View>
-  );
+			<View style={styles.piccon}>
+				<Text style={styles.subtitulo}>Estado Civil</Text>
+				<Picker
+					selectedValue={estado}
+					style={styles.picker}
+					onValueChange={(itemValue) => setEstado(itemValue)}
+				>
+					<Picker.Item label="Seleccione..." value="" />
+					<Picker.Item label="Soltero/a" value="Soltero/a" />
+					<Picker.Item label="Casado/a" value="Casado/a" />
+					<Picker.Item label="Divorciado/a" value="Divorciado/a" />
+					<Picker.Item label="Viudo/a" value="Viudo/a" />
+				</Picker>
+			</View>
+			<Button title="GUARDAR" onPress={() => guardar()} />
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1d3557',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#f4a261',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#f1faee',
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#1d3557',
-  },
-  registerButton: {
-    backgroundColor: '#e63946',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  registerButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  footerText: {
-    marginTop: 20,
-    color: '#f1faee',
-    fontSize: 16,
-    textDecorationLine: 'underline',
-  },
+	container: {
+		flex: 1,
+		padding: 20,
+		backgroundColor: '#fff',
+	},
+	title: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		marginBottom: 20,
+		textAlign: 'center',
+	},
+	inp: {
+		height: 50,
+		fontSize: 18,
+		backgroundColor: '#364ec9c7',
+		borderRadius: 10,
+		paddingHorizontal: 15,
+		marginVertical: 8,
+		color: '#fff',
+	},
+	piccon: {
+		marginVertical: 10,
+	},
+	subtitulo: {
+		fontSize: 15,
+		marginBottom: 5,
+		color: '#000000c7',
+	},
+	picker: {
+		height: 50,
+		backgroundColor: '#364ec9c7',
+		borderRadius: 10,
+	},
 });

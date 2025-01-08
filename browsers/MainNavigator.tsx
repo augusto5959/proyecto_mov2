@@ -5,6 +5,7 @@ import RegisterScreen from '../Screens/RegisterScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import JuegoScreen from '../Screens/JuegoScreen';
 
+
 const Stack = createStackNavigator();
 
 function MyStack(){
@@ -14,6 +15,7 @@ function MyStack(){
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Juego" component={JuegoScreen} />
+            
         </Stack.Navigator>
     )
 }

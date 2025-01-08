@@ -12,7 +12,9 @@ export default function Welcome({navigation}: any) {
             <Button 
                 title="Register"
 				onPress={() => navigation.navigate('Register')} 
+                
             />
+            
         </View>
     );
 }

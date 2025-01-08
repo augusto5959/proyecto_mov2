@@ -5,9 +5,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  
   function handleLogin() {
-    
     if (!email.trim()) {
       Alert.alert('Error', 'Por favor, ingresa un correo electrónico.');
       return;
@@ -17,21 +15,18 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       return;
     }
 
-    
     if (!email.includes('@')) {
       Alert.alert('Error', 'Por favor, ingresa un correo válido.');
       return;
     }
 
-   
     if (password.length < 6) {
       Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
-  
     Alert.alert('Bienvenido', '¡Inicio de sesión exitoso!');
-    navigation.navigate('Juego'); 
+    navigation.navigate('Juego');
   }
 
   return (
@@ -57,6 +52,14 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+      </TouchableOpacity>
+
+      {/* Botón adicional para ir a la pantalla de puntuación */}
+      <TouchableOpacity
+        style={styles.puntuacionButton}
+        onPress={() => navigation.navigate('Puntuacion')}
+      >
+        <Text style={styles.puntuacionButtonText}>Ir a Puntuaciones</Text>
       </TouchableOpacity>
 
       <Text style={styles.footerText}>¡Prepárate para cazar insectos y ganar puntos!</Text>
@@ -107,6 +110,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  puntuacionButton: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#16213e',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#0f3460',
+  },
+  puntuacionButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   footerText: {
     color: '#fff',
     fontSize: 16,
@@ -114,5 +133,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-  
-

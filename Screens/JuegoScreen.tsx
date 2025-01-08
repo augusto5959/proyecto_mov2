@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, Dimensions } from 'react-native';
-import { getDatabase, ref, push } from 'firebase/database';
-import { initializeApp } from "firebase/app";
+import { ref, push } from 'firebase/database';
 import { db } from '../config/Config';
 
 const { width, height } = Dimensions.get('window');
-
 
 export default function JuegoScreen() {
   const [score, setScore] = useState(0); 
@@ -48,7 +46,7 @@ export default function JuegoScreen() {
   // Guardar puntaje en Firebase
   const saveScoreToDatabase = async (finalScore: number) => {
     try {
-      const scoresRef = ref(db, 'scores'); 
+      const scoresRef = ref(db, 'scores');
       await push(scoresRef, { score: finalScore, timestamp: Date.now() });
       console.log('Puntaje guardado en Firebase');
     } catch (error) {

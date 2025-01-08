@@ -4,6 +4,7 @@ import LoginScreen from '../Screens/LoginScreen';
 import RegisterScreen from '../Screens/RegisterScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import JuegoScreen from '../Screens/JuegoScreen';
+import PuntuacionScreen from '../Screens/PuntuacionScreen';
 
 
 
@@ -18,6 +19,7 @@ function MyStack(){
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Juego" component={JuegoScreen} />
+            <Stack.Screen name="Puntuacion" component={PuntuacionScreen} />
            
            
         </Stack.Navigator>

@@ -5,17 +5,33 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  
   function handleLogin() {
+    
+    if (!email.trim()) {
+      Alert.alert('Error', 'Por favor, ingresa un correo electrónico.');
+      return;
+    }
+    if (!password.trim()) {
+      Alert.alert('Error', 'Por favor, ingresa una contraseña.');
+      return;
+    }
+
+    
     if (!email.includes('@')) {
       Alert.alert('Error', 'Por favor, ingresa un correo válido.');
       return;
     }
+
+   
     if (password.length < 6) {
       Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
+
+  
     Alert.alert('Bienvenido', '¡Inicio de sesión exitoso!');
-    navigation.navigate('Juego');
+    navigation.navigate('Juego'); 
   }
 
   return (
@@ -43,24 +59,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={() => navigation.navigate('EquipoDesarrollo')}
-      >
-        <Text style={styles.secondaryButtonText}>Equipo de Desarrollo</Text>
-      </TouchableOpacity>
-	  
-	  <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={() => navigation.navigate('Puntuaciones')}
-      >
-        <Text style={styles.secondaryButtonText}>Puntuaciones</Text>
-      </TouchableOpacity>
-	  
-
-      <Text style={styles.footerText}>
-        ¡Prepárate para cazar insectos y ganar puntos!
-      </Text>
+      <Text style={styles.footerText}>¡Prepárate para cazar insectos y ganar puntos!</Text>
     </View>
   );
 }
@@ -108,21 +107,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  secondaryButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#16213e',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#0f3460',
-  },
-  secondaryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
   footerText: {
     color: '#fff',
     fontSize: 16,
@@ -130,3 +114,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+  
+

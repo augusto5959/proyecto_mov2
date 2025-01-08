@@ -4,8 +4,8 @@ import LoginScreen from '../Screens/LoginScreen';
 import RegisterScreen from '../Screens/RegisterScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import JuegoScreen from '../Screens/JuegoScreen';
-import EquipoDesarrolloScreen from '../Screens/EquipoDesarrolloScreen';
-import PuntScreen from '../Screens/PuntScreen';
+
+
 
 
 
@@ -18,8 +18,8 @@ function MyStack(){
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Juego" component={JuegoScreen} />
-            <Stack.Screen name="EquipoDesarrollo" component={EquipoDesarrolloScreen} />
-            <Stack.Screen name="Puntuaciones" component={PuntScreen} />
+           
+           
         </Stack.Navigator>
     )
 }

@@ -63,6 +63,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 		  alignItems: 'center',
 		  justifyContent: 'center',
 		  padding: 20,
+		  
+		  
 		},
 		title: {
 		  fontSize: 32,

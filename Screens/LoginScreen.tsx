@@ -8,7 +8,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 	
 	
 	function handleLogin() {
-		if (!email.includes('@')) {
+		/*if (!email.includes('@')) {
 		  Alert.alert('Error', 'Por favor, ingresa un correo válido.');
 		  return;
 		}
@@ -16,7 +16,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 		  Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
 		  return;
 		}
-		Alert.alert('Bienvenido', '¡Inicio de sesión exitoso!');
+		Alert.alert('Bienvenido', '¡Inicio de sesión exitoso!');*/
+		navigation.navigate('MyButton');
 	  }
 	
 	  
@@ -43,7 +44,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
 			secureTextEntry={true}
 		  />
 	
-		  <TouchableOpacity style={styles.loginButton} onPress={()=>{handleLogin(); navigation.navigate('Juego'); }}>
+		  <TouchableOpacity style={styles.loginButton} onPress={()=>{handleLogin()}}>
 			<Text style={styles.loginButtonText} >Iniciar Sesión</Text>
 		  </TouchableOpacity>
 	

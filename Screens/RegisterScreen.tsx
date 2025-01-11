@@ -4,6 +4,8 @@ import { Picker } from '@react-native-picker/picker';
 import { getDatabase, ref, set } from "firebase/database";
 import App from '../App';
 import { db } from '../config/Config';
+
+
 export default function RegisterScreen() {
 	const [cedula, setCedula] = useState('');
 	const [nombre, setNombre] = useState('');
@@ -12,6 +14,8 @@ export default function RegisterScreen() {
 	const [genero, setGenero] = useState('');
 	const [correo, setCorreo] = useState('');
 	const [estado, setEstado] = useState('');
+	const [contrasena, setcontrasena] = useState('')
+
 	function guardar() {
 		set(ref(db, 'usuarios/' + cedula), {
 			name: nombre,
@@ -20,7 +24,10 @@ export default function RegisterScreen() {
 			gender: genero,
 			email: correo,
 			state: estado,
+			password:contrasena
 		});
+
+		
 		limpiar();
 	}
 	function limpiar() {
@@ -31,6 +38,9 @@ export default function RegisterScreen() {
 		setGenero('');
 		setCorreo('');
 		setEstado('');
+		setcontrasena('');
+
+		
 	}
 	return (
 		<View style={styles.container}>
@@ -61,6 +71,14 @@ export default function RegisterScreen() {
 				keyboardType="numeric"
 				onChangeText={(texto) => setEdad(+texto)}
 			/>
+			<TextInput
+				placeholder="Ingrese contraseña"
+				style={styles.inp}
+				keyboardType="numeric"
+				onChangeText={(texto) => setcontrasena(texto)}
+				
+			/>
+
 
 			<View style={styles.piccon}>
 				<Text style={styles.subtitulo}>Seleccione el Género</Text>

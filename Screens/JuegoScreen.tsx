@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, Dimensions } from 'react-native';
-import { ref, push } from 'firebase/database';
+import { ref, push, update, remove } from 'firebase/database';
 import { db } from '../config/Config';
 
 const { width, height } = Dimensions.get('window');
 
-export default function JuegoScreen() {
-  const [score, setScore] = useState(0); 
-  const [timeLeft, setTimeLeft] = useState(30); 
-  const [insects, setInsects] = useState(generateInsects());
+// Definir tipo para los insectos
+type Insect = {
+  id: string;
+  x: number;
+  y: number;
+};
+
+export default function JuegoScreen({ route }: { route: any }) {
+  const { email } = route.params; // Recibimos el correo desde los parámetros
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [insects, setInsects] = useState<Insect[]>([]); // Tipo definido aquí
+  const [isGameActive, setIsGameActive] = useState(false);
 
   // Función para generar insectos en posiciones aleatorias
-  function generateInsects() {
-    const insectsArray = [];
+  function generateInsects(): Insect[] {
+    const insectsArray: Insect[] = [];
     for (let i = 0; i < 10; i++) {
       insectsArray.push({
         id: i.toString(),
@@ -30,12 +39,29 @@ export default function JuegoScreen() {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
-    } else {
-      // Guardar puntaje en Firebase
+    } else if (timeLeft === 0 && isGameActive) {
+      // Guardar puntaje en Firebase y limpiar estado de "jugando"
       saveScoreToDatabase(score);
+      setIsGameActive(false);
       Alert.alert('¡Fin del Juego!', `Puntaje Final: ${score}`);
     }
   }, [timeLeft]);
+
+  // Función para iniciar el juego
+  const startGame = () => {
+    setScore(0);
+    setTimeLeft(30);
+    setInsects(generateInsects());
+    setIsGameActive(true);
+
+    // Actualizar estado "jugando" en Firebase
+    if (email) {
+      const statusRef = ref(db, `usuarios/${email.replace('.', '_')}/status`);
+      update(statusRef, { isPlaying: true }).catch((error) => {
+        console.error('Error al actualizar el estado de juego:', error);
+      });
+    }
+  };
 
   // Función para "atrapar" un insecto
   const handleCatchInsect = (id: string) => {
@@ -46,8 +72,13 @@ export default function JuegoScreen() {
   // Guardar puntaje en Firebase
   const saveScoreToDatabase = async (finalScore: number) => {
     try {
-      const scoresRef = ref(db, 'scores');
+      const scoresRef = ref(db, `usuarios/${email.replace('.', '_')}/scores`);
       await push(scoresRef, { score: finalScore, timestamp: Date.now() });
+
+      // Limpiar estado "jugando"
+      const statusRef = ref(db, `usuarios/${email.replace('.', '_')}/status`);
+      await remove(statusRef);
+
       console.log('Puntaje guardado en Firebase');
     } catch (error) {
       console.error('Error al guardar el puntaje:', error);
@@ -59,15 +90,27 @@ export default function JuegoScreen() {
       <Text style={styles.score}>Puntaje: {score}</Text>
       <Text style={styles.timer}>Tiempo restante: {timeLeft}s</Text>
 
-      <View style={styles.gameArea}>
-        {insects.map((insect) => (
-          <TouchableOpacity
-            key={insect.id}
-            style={[styles.insect, { top: insect.y, left: insect.x }]}
-            onPress={() => handleCatchInsect(insect.id)}
-          />
-        ))}
-      </View>
+      {isGameActive ? (
+        <View style={styles.gameArea}>
+          {insects.map((insect) => (
+            <TouchableOpacity
+              key={insect.id}
+              style={[styles.insect, { top: insect.y, left: insect.x }]}
+              onPress={() => handleCatchInsect(insect.id)}
+            />
+          ))}
+        </View>
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={startGame}>
+          <Text style={styles.buttonText}>Jugar</Text>
+        </TouchableOpacity>
+      )}
+
+      {!isGameActive && score > 0 && (
+        <TouchableOpacity style={styles.button} onPress={startGame}>
+          <Text style={styles.buttonText}>Jugar de Nuevo</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -108,5 +151,19 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 2,
     borderColor: '#000',
+  },
+  button: {
+    backgroundColor: '#00b4d8',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '60%',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

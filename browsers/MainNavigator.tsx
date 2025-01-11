@@ -12,7 +12,7 @@ import PerfilScreen from '../Screens/PerfilScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Tab Navigator simple con Juego y Puntuacion
+
 function MyTabNavigator({ route }: { route: any }) {
     const { email } = route.params; // Recibe el correo del usuario desde los parámetros de navegación
   
@@ -20,16 +20,16 @@ function MyTabNavigator({ route }: { route: any }) {
         <Tab.Navigator>
             <Tab.Screen name="Juego" component={JuegoScreen} initialParams={{ email }}/>
             <Tab.Screen name="Puntuacion" component={PuntuacionScreen} initialParams={{ email }}/>
-            <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} // Pasar el correo como parámetro inicial
+            <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />  // Pasar el correo como parámetro inicial
   
-  
-   
-/>
         </Tab.Navigator>
+   
+
+        
     );
 }
 
-// Stack Navigator para las pantallas iniciales
+
 function MyStack() {
     return (
         <Stack.Navigator initialRouteName="Welcome">
@@ -38,11 +38,11 @@ function MyStack() {
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Perfil" component={PerfilScreen} />
 
-            {/* Redirección al Tab Navigator */}
+         
             <Stack.Screen
                 name="MainTabs"
                 component={MyTabNavigator}
-                options={{ headerShown: false }} // Ocultar encabezado en el Tab Navigator
+                options={{ headerShown: false }} 
             />
         </Stack.Navigator>
     );

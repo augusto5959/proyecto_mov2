@@ -39,7 +39,7 @@ export default function PerfilScreen({ route }: { route: any }) {
       }
     );
 
-    return () => unsubscribe(); // Desuscribimos cuando se desmonta
+    return () => unsubscribe(); 
   }, [email]);
 
   if (loading) {

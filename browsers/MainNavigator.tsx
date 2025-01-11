@@ -20,7 +20,7 @@ function MyTabNavigator({ route }: { route: any }) {
         <Tab.Navigator>
             <Tab.Screen name="Juego" component={JuegoScreen} initialParams={{ email }}/>
             <Tab.Screen name="Puntuacion" component={PuntuacionScreen} initialParams={{ email }}/>
-            <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />  // Pasar el correo como parámetro inicial
+            <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />  
   
         </Tab.Navigator>
    

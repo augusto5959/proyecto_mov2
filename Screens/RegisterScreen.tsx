@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { getDatabase, ref, set } from "firebase/database";
 import App from '../App';
-import { db } from '../config/Config';
+import { auth, db } from '../config/Config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 
-export default function RegisterScreen() {
+export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
 	const [nombre, setNombre] = useState('');
 	const [apellido, setApellido] = useState('');
@@ -16,6 +17,21 @@ export default function RegisterScreen() {
 	const [estado, setEstado] = useState('');
 	const [contrasena, setcontrasena] = useState('')
 
+	function register() {
+		createUserWithEmailAndPassword(auth, correo, contrasena)
+			.then((userCredential) => {
+				// Signed up 
+				const user = userCredential.user;
+				// ...
+			})
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				// ..
+			});
+	}
+
+
 	function guardar() {
 		set(ref(db, 'usuarios/' + cedula), {
 			name: nombre,
@@ -24,10 +40,10 @@ export default function RegisterScreen() {
 			gender: genero,
 			email: correo,
 			state: estado,
-			password:contrasena
+			password: contrasena
 		});
 
-		
+
 		limpiar();
 	}
 	function limpiar() {
@@ -40,7 +56,7 @@ export default function RegisterScreen() {
 		setEstado('');
 		setcontrasena('');
 
-		
+
 	}
 	return (
 		<View style={styles.container}>
@@ -76,7 +92,7 @@ export default function RegisterScreen() {
 				style={styles.inp}
 				keyboardType="numeric"
 				onChangeText={(texto) => setcontrasena(texto)}
-				
+
 			/>
 
 
@@ -115,7 +131,27 @@ export default function RegisterScreen() {
 					<Picker.Item label="Viudo/a" value="Viudo/a" />
 				</Picker>
 			</View>
-			<Button title="GUARDAR" onPress={() => guardar()} />
+
+			<View>
+				<Button
+					title="GUARDAR"
+					onPress={() => {
+						guardar();
+						register();
+						Alert.alert(
+							'Registro exitoso',
+							'¡Gracias por registrarte!',
+							[
+								{
+									text: 'Aceptar',
+									onPress: () => navigation.navigate('Welcome'), // Redirige a la pantalla Welcome
+								},
+							],
+							{ cancelable: false } // Impide cerrar la alerta sin presionar un botón
+						);
+					}}
+				/>
+			</View>
 		</View>
 	);
 }

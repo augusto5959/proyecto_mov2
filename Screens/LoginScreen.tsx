@@ -127,15 +127,21 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
         <Modal visible={ver} transparent={true}>
           <View style={styles.container2}>
-            <View style={styles.container3}>
-              <TextInput
-                placeholder='Ingresar correo'
-                style={styles.inp}
-                onChangeText={(texto) => setcorreoRestablecer(texto)}
-              />
-              <Button title='Enviar' onPress={() => restablecer()} />
-              <Button title='CERRAR' onPress={() => setver(!ver)} color={'green'} />
-            </View>
+          <View style={styles.container3}>
+  <TextInput
+    placeholder="Ingresar correo"
+    style={styles.inp}
+    onChangeText={(texto) => setcorreoRestablecer(texto)}
+  />
+
+  <TouchableOpacity style={styles.buttonPrimary} onPress={() => restablecer()}>
+    <Text style={styles.buttonText}>Enviar</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity style={styles.buttonSecondary} onPress={() => setver(!ver)}>
+    <Text style={styles.buttonText}>Cerrar</Text>
+  </TouchableOpacity>
+</View>
           </View>
         </Modal>
         <TouchableOpacity style={styles.loginBt}
@@ -212,33 +218,28 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   t: {
-    fontSize: 20,
-    color: 'green'
+    fontSize: 18,
+    color: '#2D87FF', // Azul llamativo pero amigable
+    textAlign: 'center',
+    marginVertical: 10, // Espaciado vertical para separar del resto del contenido
   },
   text: {
     fontStyle: 'italic',
     fontWeight: 'bold',
+    textDecorationLine: 'underline', // Subrayado para indicar interacción
+    letterSpacing: 0.5, // Espaciado entre letras para mejor legibilidad
+ 
+  },
+  // Añade este estilo dinámico al presionar el botón
+  textPress: {
+    color: '#0B5ACC', // Oscurece el azul al hacer clic
   }, container2: {
     backgroundColor: 'rgba(51, 56, 61, 0.8)',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  container3: {
-    backgroundColor: 'white',
-    width: '90%',
-    height: 190,
-    paddingHorizontal: 10,
-    borderRadius: 30,
 
-  }, inp: {
-    fontSize: 23,
-    backgroundColor: '#455cf2c7',
-    borderRadius: 20,
-    margin: 20,
-    paddingHorizontal: 14,
-
-  },
   loginBt: {
     top:25,
     width: '20%',
@@ -253,5 +254,60 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
+  },
+  inp: {
+    fontSize: 18,
+    backgroundColor: '#E3E7EA',
+    borderRadius: 10,
+    marginVertical: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#B0BEC5',
+    width: '100%',
+  },
+  container3: {
+    backgroundColor: '#FFFFFF',
+    width: '90%',
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  buttonPrimary: {
+    backgroundColor: '#007BFF',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    marginTop: 15,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  buttonSecondary: {
+    backgroundColor: '#28A745',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    marginTop: 10,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

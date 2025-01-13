@@ -1,54 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Image, View, Text, StyleSheet, Alert } from 'react-native';
+import { useState } from 'react';
+import { Button, Image, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function GaleriaScreen() {
     const [image, setImage] = useState<string | null>(null);
-    const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-
-    useEffect(() => {
-        // Verificar permisos al inicio
-        const checkPermissions = async () => {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            setHasPermission(status === 'granted');
-        };
-
-        checkPermissions();
-    }, []);
+    const [status, setStatus] = useState<string>('');
 
     const pickImage = async () => {
-        if (!hasPermission) {
-            Alert.alert('Permiso denegado', 'Por favor, otorgue permiso para acceder a la galería.');
-            return;
+        try {
+            // Solicitar permisos de la cámara si no se han otorgado
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (status !== 'granted') {
+                setStatus('Se necesita permiso para acceder a la galería.');
+                return;
+            }
+
+            // Abrir la galería de imágenes
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images, // Solo imágenes
+                allowsEditing: true,
+                aspect: [16, 9],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+                setStatus('Imagen seleccionada correctamente!');
+            } else {
+                setStatus('No se seleccionó ninguna imagen.');
+            }
+        } catch (error) {
+            setStatus('Ocurrió un error al seleccionar la imagen.');
+            console.error(error);
         }
-
-        // Intentar abrir la galería
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 1,
-        });
-
-        if (result.canceled) {
-            Alert.alert('Selección cancelada', 'No se seleccionó ninguna imagen.');
-            return;
-        }
-
-        setImage(result.assets[0].uri);
     };
 
     return (
         <View style={styles.container}>
-            <Button title="Seleccionar Imagen" onPress={pickImage} />
+            <Text style={styles.title}>Selecciona una imagen de la galería</Text>
+
+            <TouchableOpacity style={styles.pickButton} onPress={pickImage}>
+                <Text style={styles.pickButtonText}>Abrir Galería</Text>
+            </TouchableOpacity>
+
             {image ? (
-                <>
-                    <Image source={{ uri: image }} style={styles.image} />
-                    <Text style={styles.imageText}>Imagen seleccionada</Text>
-                </>
+                <Image source={{ uri: image }} style={styles.image} />
             ) : (
-                <Text style={styles.instructions}>Selecciona una imagen de la galería.</Text>
+                <Text style={styles.placeholderText}>No se ha seleccionado ninguna imagen.</Text>
             )}
+
+            {status && <Text style={styles.status}>{status}</Text>}
         </View>
     );
 }
@@ -58,23 +60,39 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#f4f4f9',
         padding: 20,
     },
-    image: {
-        width: '100%',
-        height: 300,
-        marginVertical: 20,
-        borderRadius: 10,
-        borderWidth: 2,
-        borderColor: '#ddd',
-    },
-    imageText: {
-        fontSize: 16,
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
         color: '#333',
-        marginTop: 10,
     },
-    instructions: {
+    pickButton: {
+        backgroundColor: '#4CAF50',
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 20,
+    },
+    pickButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    image: {
+        width: '95%',
+        height: 300,
+        borderRadius: 10,
+        marginBottom: 20,
+    },
+    placeholderText: {
         fontSize: 16,
         color: '#888',
+    },
+    status: {
+        fontSize: 16,
+        color: '#333',
+        marginTop: 20,
     },
 });

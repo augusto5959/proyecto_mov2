@@ -8,6 +8,8 @@ import RegisterScreen from '../Screens/RegisterScreen';
 import JuegoScreen from '../Screens/JuegoScreen';
 import PuntuacionScreen from '../Screens/PuntuacionScreen';
 import PerfilScreen from '../Screens/PerfilScreen';
+import GaleriaScreen from '../Screens/GaleriaScreen';
+import CamaraScreen from '../Screens/CamaraScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,7 +23,8 @@ function MyTabNavigator({ route }: { route: any }) {
             <Tab.Screen name="Juego" component={JuegoScreen} initialParams={{ email }} />
             <Tab.Screen name="Puntuacion" component={PuntuacionScreen} initialParams={{ email }} />
             <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />
-
+            <Tab.Screen name='Galeria' component={GaleriaScreen}/>
+            <Tab.Screen name='Camara' component={CamaraScreen}/>
         </Tab.Navigator>
 
 

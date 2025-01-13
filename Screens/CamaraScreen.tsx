@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function GaleriaScreen() {
+export default function CamaraScreen() {
   return (
     <View>
-      <Text>GaleriaScreen</Text>
+      <Text>CamaraScreen</Text>
     </View>
   )
 }

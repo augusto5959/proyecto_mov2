@@ -19,7 +19,7 @@ function MyTabNavigator({ route }: { route: any }) {
     const { email } = route.params; // Recibe el correo del usuario desde los parámetros de navegación
 
     return (
-        <Tab.Navigator>
+        <Tab.Navigator initialRouteName='Galeria'>
             <Tab.Screen name="Juego" component={JuegoScreen} initialParams={{ email }} />
             <Tab.Screen name="Puntuacion" component={PuntuacionScreen} initialParams={{ email }} />
             <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />

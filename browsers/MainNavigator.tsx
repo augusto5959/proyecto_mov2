@@ -10,6 +10,7 @@ import PuntuacionScreen from '../Screens/PuntuacionScreen';
 import PerfilScreen from '../Screens/PerfilScreen';
 import GaleriaScreen from '../Screens/GaleriaScreen';
 import CamaraScreen from '../Screens/CamaraScreen';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -19,7 +20,14 @@ function MyTabNavigator({ route }: { route: any }) {
     const { email } = route.params; // Recibe el correo del usuario desde los parámetros de navegación
 
     return (
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions={({route})=>({
+            tabBarIcon:()=>{
+                switch(route.name){
+                    
+                }
+                return <Ionicons name="home" size={24} color="black"/>
+            }
+        })}>
             <Tab.Screen name="Juego" component={JuegoScreen} initialParams={{ email }} />
             <Tab.Screen name="Puntuacion" component={PuntuacionScreen} initialParams={{ email }} />
             <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />

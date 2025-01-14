@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View, TextInput, Alert } from 'react-native';
+import {
+	Button,
+	StyleSheet,
+	Text,
+	View,
+	TextInput,
+	Alert,
+	Image,
+	TouchableOpacity,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set } from 'firebase/database';
 import App from '../App';
 import { auth, db } from '../config/Config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-
+import * as ImagePicker from 'expo-image-picker';
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
@@ -15,12 +24,47 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [genero, setGenero] = useState('');
 	const [correo, setCorreo] = useState('');
 	const [estado, setEstado] = useState('');
-	const [contrasena, setcontrasena] = useState('')
+	const [contrasena, setcontrasena] = useState('');
+
+	const [image, setImage] = useState<string | null>(null);
+	const [status, setStatus] = useState<string>('');
+
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ['images', 'videos'],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		console.log(result);
+
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
+
+	const takeImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchCameraAsync({
+			mediaTypes: ['images', 'videos'],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		console.log(result);
+
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
 
 	function register() {
 		createUserWithEmailAndPassword(auth, correo, contrasena)
 			.then((userCredential) => {
-				// Signed up 
+				// Signed up
 				const user = userCredential.user;
 				// ...
 			})
@@ -31,7 +75,6 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 			});
 	}
 
-
 	function guardar() {
 		set(ref(db, 'usuarios/' + cedula), {
 			name: nombre,
@@ -40,9 +83,8 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 			gender: genero,
 			email: correo,
 			state: estado,
-			password: contrasena
+			password: contrasena,
 		});
-
 
 		limpiar();
 	}
@@ -55,46 +97,42 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		setCorreo('');
 		setEstado('');
 		setcontrasena('');
-
-
 	}
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Registros</Text>
 
 			<TextInput
-				placeholder="Ingresar Cédula"
+				placeholder='Ingresar Cédula'
 				style={styles.inp}
 				value={cedula}
 				onChangeText={(texto) => setCedula(texto)}
 			/>
 			<TextInput
-				placeholder="Ingrese el Nombre"
+				placeholder='Ingrese el Nombre'
 				style={styles.inp}
 				value={nombre}
 				onChangeText={(texto) => setNombre(texto)}
 			/>
 			<TextInput
-				placeholder="Ingrese el Apellido"
+				placeholder='Ingrese el Apellido'
 				style={styles.inp}
 				value={apellido}
 				onChangeText={(texto) => setApellido(texto)}
 			/>
 			<TextInput
-				placeholder="Ingrese la Edad"
+				placeholder='Ingrese la Edad'
 				style={styles.inp}
 				value={edad?.toString()}
-				keyboardType="numeric"
+				keyboardType='numeric'
 				onChangeText={(texto) => setEdad(+texto)}
 			/>
 			<TextInput
-				placeholder="Ingrese contraseña"
+				placeholder='Ingrese contraseña'
 				style={styles.inp}
-				keyboardType="numeric"
+				keyboardType='numeric'
 				onChangeText={(texto) => setcontrasena(texto)}
-
 			/>
-
 
 			<View style={styles.piccon}>
 				<Text style={styles.subtitulo}>Seleccione el Género</Text>
@@ -103,38 +141,37 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 					style={styles.picker}
 					onValueChange={(itemValue) => setGenero(itemValue)}
 				>
-					<Picker.Item label="Seleccione..." value="" />
-					<Picker.Item label="Masculino" value="Masculino" />
-					<Picker.Item label="Femenino" value="Femenino" />
-					<Picker.Item label="Otro" value="Otro" />
+					<Picker.Item label='Seleccione...' value='' />
+					<Picker.Item label='Masculino' value='Masculino' />
+					<Picker.Item label='Femenino' value='Femenino' />
+					<Picker.Item label='Otro' value='Otro' />
 				</Picker>
 			</View>
 
 			<TextInput
-				placeholder="Ingrese el Correo Electrónico"
+				placeholder='Ingrese el Correo Electrónico'
 				style={styles.inp}
 				value={correo}
 				onChangeText={(texto) => setCorreo(texto)}
 			/>
 
-			<View style={styles.piccon}>
-				<Text style={styles.subtitulo}>Estado Civil</Text>
-				<Picker
-					selectedValue={estado}
-					style={styles.picker}
-					onValueChange={(itemValue) => setEstado(itemValue)}
-				>
-					<Picker.Item label="Seleccione..." value="" />
-					<Picker.Item label="Soltero/a" value="Soltero/a" />
-					<Picker.Item label="Casado/a" value="Casado/a" />
-					<Picker.Item label="Divorciado/a" value="Divorciado/a" />
-					<Picker.Item label="Viudo/a" value="Viudo/a" />
-				</Picker>
+			<Text style={styles.subtitulo}>Agrega una imagen</Text>
+
+			<View style={styles.containerButtons}>
+				<TouchableOpacity style={styles.button} onPress={pickImage}>
+					<Text style={styles.buttonText}>Abrir galería</Text>
+				</TouchableOpacity>
+				{image && <Image source={{ uri: image }} style={styles.image} />}
+
+				<TouchableOpacity style={styles.button} onPress={takeImage}>
+					<Text style={styles.buttonText}>Tomar foto</Text>
+				</TouchableOpacity>
+				{image && <Image source={{ uri: image }} style={styles.image} />}
 			</View>
 
 			<View>
 				<Button
-					title="GUARDAR"
+					title='GUARDAR'
 					onPress={() => {
 						guardar();
 						register();
@@ -144,10 +181,10 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 							[
 								{
 									text: 'Aceptar',
-									onPress: () => navigation.navigate('Welcome'), // Redirige a la pantalla Welcome
+									onPress: () => navigation.navigate('Welcome'),
 								},
 							],
-							{ cancelable: false } // Impide cerrar la alerta sin presionar un botón
+							{ cancelable: false },
 						);
 					}}
 				/>
@@ -159,13 +196,13 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 20,
 		backgroundColor: '#fff',
+		padding: 15,
 	},
 	title: {
 		fontSize: 24,
 		fontWeight: 'bold',
-		marginBottom: 20,
+		marginBottom: 10,
 		textAlign: 'center',
 	},
 	inp: {
@@ -190,4 +227,27 @@ const styles = StyleSheet.create({
 		backgroundColor: '#364ec9c7',
 		borderRadius: 10,
 	},
+	image: {
+		width: '95%',
+		height: 300,
+		borderRadius: 10,
+		marginBottom: 20,
+	},
+	button: {
+		backgroundColor: '#007AFF',
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		marginVertical: 10,
+		width: 150,
+	},
+	buttonText: {
+		color: '#fff',
+		fontSize: 16,
+		textAlign: 'center',
+	},
+	containerButtons:{
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+	}
 });

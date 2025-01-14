@@ -11,28 +11,39 @@ import PerfilScreen from '../Screens/PerfilScreen';
 import GaleriaScreen from '../Screens/GaleriaScreen';
 import CamaraScreen from '../Screens/CamaraScreen';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 
 function MyTabNavigator({ route }: { route: any }) {
-    const { email } = route.params; // Recibe el correo del usuario desde los parámetros de navegación
+    const { email } = route.params; 
 
     return (
         <Tab.Navigator screenOptions={({route})=>({
             tabBarIcon:()=>{
+                let iconName = '';
                 switch(route.name){
-                    
+                    case 'Juego':{
+                        iconName = 'game-controller';
+                        break;
+                    }
+                    case 'Puntuacion':{
+                        iconName = 'trophy';
+                        break;
+                    }
+                    case 'Perfil':{
+                        iconName = 'person';
+                        break;
+                    }
                 }
-                return <Ionicons name="home" size={24} color="black"/>
+                return <Icon name={iconName} size={24} color="black"/>
             }
         })}>
             <Tab.Screen name="Juego" component={JuegoScreen} initialParams={{ email }} />
             <Tab.Screen name="Puntuacion" component={PuntuacionScreen} initialParams={{ email }} />
             <Tab.Screen name="Perfil" component={PerfilScreen} initialParams={{ email }} />
-            <Tab.Screen name='Galeria' component={GaleriaScreen}/>
-            <Tab.Screen name='Camara' component={CamaraScreen}/>
         </Tab.Navigator>
 
 

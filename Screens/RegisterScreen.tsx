@@ -16,12 +16,10 @@ import { auth, db } from '../config/Config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as ImagePicker from 'expo-image-picker';
 
-
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';//importar e instalar npm install buffer
 import axios from 'axios';// importar e intalar axios npm intall axios
 //import { token } from '../config/secrets';
-
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
@@ -95,6 +93,86 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		setImage(null);
 	}
 
+	////////////////////////////////////
+
+	// Subir imagen a Dropbox y obtener el enlace de la imagen
+	const subirImagen = async (nombre: String) => {
+		if (!image) {
+			Alert.alert('Error', 'Primero selecciona una imagen');
+			return;
+		}
+
+		const ACCESS_TOKEN = token; // Token válido de Dropbox
+
+		try {
+			// Leer el archivo local como Base64
+			const fileData = await FileSystem.readAsStringAsync(image, {
+				encoding: FileSystem.EncodingType.Base64,
+			});
+
+			// Convertir Base64 a binario
+			const fileBuffer = Buffer.from(fileData, 'base64'); // Utiliza Buffer importado
+
+			// Crear los argumentos para la API de Dropbox
+			const dropboxArg = {
+				path: `/${nombre}`, // Ruta donde se guardará el archivo
+				mode: 'add',
+				autorename: true,
+				mute: false,
+			};
+
+			// Subir el archivo binario a Dropbox
+			const result = await axios.post(
+				'https://content.dropboxapi.com/2/files/upload',
+				fileBuffer,
+				{
+					headers: {
+						Authorization: `Bearer ${ACCESS_TOKEN}`,
+						'Dropbox-API-Arg': JSON.stringify(dropboxArg),
+						'Content-Type': 'application/octet-stream',
+					},
+				},
+			);
+
+			console.log('Dropbox response:', result.data);
+
+			// Después de la subida, obtener la URL de la imagen
+			const filePath = result.data.path_display;
+
+			// Solicitar el enlace de descarga del archivo
+			const sharedLinkResult = await axios.post(
+				'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings',
+				{
+					path: filePath, // Ruta del archivo
+					settings: {
+						requested_visibility: 'public', // Hacer el enlace público
+					},
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${ACCESS_TOKEN}`,
+					},
+				},
+			);
+
+			// Obtener la URL del enlace compartido
+			const downloadUrl = sharedLinkResult.data.url.replace('?dl=0', '?raw=1'); // Hacer que la URL sea de descarga directa
+
+			console.log('URL de descarga:', downloadUrl);
+			setImage(downloadUrl); // Guardar la URL de la imagen subida
+
+			Alert.alert('Éxito', 'Imagen subida correctamente a Dropbox');
+		} catch (error) {
+			console.error(
+				'Error al subir la imagen:',
+				error.response?.data || error.message,
+			);
+			Alert.alert('Error', 'Hubo un problema al subir la imagen');
+		}
+	};
+
+	//////////////////////////////////////
+
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			<Text style={styles.title}>Registros</Text>
@@ -154,7 +232,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 
 			<Text style={styles.subtitulo}>Agrega una imagen</Text>
 
-			{image && <Image source={{ uri: image }} style={styles.image} />} 
+			{image && <Image source={{ uri: image }} style={styles.image} />}
 
 			<View style={styles.containerButtons}>
 				<TouchableOpacity style={styles.button} onPress={pickImage}>

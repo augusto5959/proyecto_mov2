@@ -20,7 +20,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';//importar e instalar npm install buffer
 import axios from 'axios';// importar e intalar axios npm intall axios
-import { token } from '../config/secrets';
+//import { token } from '../config/secrets';
 
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {

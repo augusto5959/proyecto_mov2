@@ -34,60 +34,59 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
   }
 
-  async function login() {
+async function login() {
     if (!email.trim()) {
-      Alert.alert('Error', 'Por favor, ingresa un correo electrónico.');
-      return;
+        Alert.alert('Error', 'Por favor, ingresa un correo electrónico.');
+        return;
     }
     if (!password.trim()) {
-      Alert.alert('Error', 'Por favor, ingresa una contraseña.');
-      return;
+        Alert.alert('Error', 'Por favor, ingresa una contraseña.');
+        return;
     }
 
     try {
-      // Intentar iniciar sesión con Firebase
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-      // Después de iniciar sesión con Firebase, buscar el usuario en la base de datos
-      const usersRef = ref(db, 'usuarios');
-      const snapshot = await get(usersRef);
+        const usersRef = ref(db, 'usuarios');
+        const snapshot = await get(usersRef);
 
-      if (snapshot.exists()) {
-        const users: Record<string, User> = snapshot.val();
-        const foundUser = Object.values(users).find(
-          (u) => u.email === email && u.password === password
-        );
+        if (snapshot.exists()) {
+            const users: Record<string, User> = snapshot.val();
+            const foundUser = Object.values(users).find(
+                (u) => u.email === email
+            );
 
-        if (foundUser) {
-          Alert.alert('Bienvenido', `¡Inicio de sesión exitoso, ${foundUser.name}!`);
-          navigation.navigate('MainTabs', { email: email }); // Navegar a la pantalla principal
+            if (foundUser) {
+                Alert.alert('Bienvenido', `¡Inicio de sesión exitoso, ${foundUser.name}!`);
+                navigation.navigate('MainTabs', { email });
+            } else {
+                Alert.alert('Error', 'Usuario no encontrado en la base de datos.');
+            }
         } else {
-          Alert.alert('Error', 'Usuario no encontrado en la base de datos.');
+            Alert.alert('Error', 'No se encontraron usuarios en la base de datos.');
         }
-      } else {
-        Alert.alert('Error', 'No se encontraron usuarios en la base de datos.');
-      }
     } catch (error: any) {
-      // Manejar errores de Firebase
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error(errorCode, errorMessage);
+        const errorCode = error.code;
 
-      let titulo = 'ERROR';
-      let mensaje = 'Ocurrió un problema al iniciar sesión.';
+        let titulo = 'ERROR';
+        let mensaje = 'Ocurrió un problema al iniciar sesión.';
 
-      if (errorCode === 'auth/invalid-credential') {
-        titulo = 'Error de contraseña';
-        mensaje = 'Contraseña incorrecta';
-      } else if (errorCode === 'auth/user-not-found') {
-        titulo = 'Usuario no encontrado';
-        mensaje = 'Por favor verifica el correo ingresado.';
-      }
+        switch (errorCode) {
+            case 'auth/wrong-password':
+                titulo = 'Error de contraseña';
+                mensaje = 'Contraseña incorrecta';
+                break;
+            case 'auth/user-not-found':
+                titulo = 'Usuario no encontrado';
+                mensaje = 'Por favor verifica el correo ingresado.';
+                break;
+        }
 
-      Alert.alert(titulo, mensaje);
+        Alert.alert(titulo, mensaje);
     }
-  }
+}
+
   return (
     <ImageBackground
       source={{ uri: 'https://play-lh.googleusercontent.com/To_MH2kz7JdtRLC3fkVSY50Rbn0ekyUCGwDEkfZETmuh24qVI3cmVExrfBBkaUgMd54=w526-h296-rw' }}

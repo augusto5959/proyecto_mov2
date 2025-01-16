@@ -24,12 +24,23 @@ export default function JuegoScreen({ route }: { route: any }) {
     const insectsArray: Insect[] = [];
     for (let i = 0; i < 10; i++) {
       insectsArray.push({
-        id: i.toString(),
-        x: Math.random() * (width - 50),
-        y: Math.random() * (height - 200),
+        id: `${Math.random()}`, // ID único
+        x: Math.random() * (width - 60), // Rango seguro en ancho
+        y: Math.random() * (height - 250), // Rango seguro en alto
       });
     }
     return insectsArray;
+  }
+
+  // Mover insectos a nuevas posiciones
+  function moveInsects() {
+    setInsects((prevInsects) =>
+      prevInsects.map((insect) => ({
+        ...insect,
+        x: Math.random() * (width - 60),
+        y: Math.random() * (height - 250),
+      }))
+    );
   }
 
   // Temporizador para el tiempo restante
@@ -47,11 +58,25 @@ export default function JuegoScreen({ route }: { route: any }) {
     }
   }, [timeLeft]);
 
+  // Verificar si el puntaje es mayor o igual a 10 y mover los insectos
+  useEffect(() => {
+    if (score >= 10 && isGameActive) {
+      moveInsects(); // Mover insectos a nuevas posiciones
+    }
+  }, [score, isGameActive]);
+
+  // Regenerar insectos cuando se terminen y el juego siga activo
+  useEffect(() => {
+    if (insects.length === 0 && isGameActive) {
+      setInsects(generateInsects());
+    }
+  }, [insects, isGameActive]);
+
   // Función para iniciar el juego
   const startGame = () => {
     setScore(0);
     setTimeLeft(30);
-    setInsects(generateInsects());
+    setInsects(generateInsects()); // Generar insectos al iniciar
     setIsGameActive(true);
 
     // Actualizar estado "jugando" en Firebase

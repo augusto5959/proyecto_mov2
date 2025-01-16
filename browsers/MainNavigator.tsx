@@ -8,9 +8,6 @@ import RegisterScreen from '../Screens/RegisterScreen';
 import JuegoScreen from '../Screens/JuegoScreen';
 import PuntuacionScreen from '../Screens/PuntuacionScreen';
 import PerfilScreen from '../Screens/PerfilScreen';
-import GaleriaScreen from '../Screens/GaleriaScreen';
-import CamaraScreen from '../Screens/CamaraScreen';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
@@ -21,7 +18,7 @@ function MyTabNavigator({ route }: { route: any }) {
     const { email } = route.params; 
 
     return (
-        <Tab.Navigator screenOptions={({route})=>({
+        <Tab.Navigator initialRouteName='Juego' screenOptions={({route})=>({
             tabBarIcon:()=>{
                 let iconName = '';
                 switch(route.name){

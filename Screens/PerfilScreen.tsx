@@ -4,9 +4,9 @@ import { ref, onValue } from 'firebase/database';
 import { db } from '../config/Config';
 
 export default function PerfilScreen({ route }: { route: any }) {
-  const { email } = route.params; // Recibimos el correo desde la navegación
-  const [userData, setUserData] = useState<any>(null); // Guardar datos del usuario
-  const [loading, setLoading] = useState(true); // Estado para mostrar "cargando"
+  const { email } = route.params; 
+  const [userData, setUserData] = useState<any>(null); 
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     if (!email) {
@@ -15,14 +15,13 @@ export default function PerfilScreen({ route }: { route: any }) {
       return;
     }
 
-    // Referencia a los datos del usuario en Firebase
+    
     const usersRef = ref(db, 'usuarios');
     const unsubscribe = onValue(
       usersRef,
       (snapshot) => {
         const users = snapshot.val();
         if (users) {
-          // Buscar el usuario cuyo correo coincida con el proporcionado
           const user = Object.values(users).find(
             (u: any) => u.email === email
           );

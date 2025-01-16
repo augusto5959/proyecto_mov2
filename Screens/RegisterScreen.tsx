@@ -8,13 +8,20 @@ import {
 	Alert,
 	Image,
 	TouchableOpacity,
+	ScrollView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { getDatabase, ref, set } from 'firebase/database';
-import App from '../App';
 import { auth, db } from '../config/Config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as ImagePicker from 'expo-image-picker';
+
+
+import * as FileSystem from 'expo-file-system';
+import { Buffer } from 'buffer';//importar e instalar npm install buffer
+import axios from 'axios';// importar e intalar axios npm intall axios
+import { token } from '../config/secrets';
+
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
@@ -25,20 +32,15 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [correo, setCorreo] = useState('');
 	const [estado, setEstado] = useState('');
 	const [contrasena, setcontrasena] = useState('');
-
 	const [image, setImage] = useState<string | null>(null);
-	const [status, setStatus] = useState<string>('');
 
 	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images', 'videos'],
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
 		});
-
-		console.log(result);
 
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
@@ -46,15 +48,12 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	};
 
 	const takeImage = async () => {
-		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchCameraAsync({
-			mediaTypes: ['images', 'videos'],
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
 			aspect: [4, 3],
 			quality: 1,
 		});
-
-		console.log(result);
 
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
@@ -64,14 +63,10 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	function register() {
 		createUserWithEmailAndPassword(auth, correo, contrasena)
 			.then((userCredential) => {
-				// Signed up
 				const user = userCredential.user;
-				// ...
 			})
 			.catch((error) => {
-				const errorCode = error.code;
 				const errorMessage = error.message;
-				// ..
 			});
 	}
 
@@ -85,9 +80,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 			state: estado,
 			password: contrasena,
 		});
-
 		limpiar();
 	}
+
 	function limpiar() {
 		setCedula('');
 		setNombre('');
@@ -97,9 +92,11 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		setCorreo('');
 		setEstado('');
 		setcontrasena('');
+		setImage(null);
 	}
+
 	return (
-		<View style={styles.container}>
+		<ScrollView contentContainerStyle={styles.container}>
 			<Text style={styles.title}>Registros</Text>
 
 			<TextInput
@@ -130,7 +127,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 			<TextInput
 				placeholder='Ingrese contraseña'
 				style={styles.inp}
-				keyboardType='numeric'
+				secureTextEntry
 				onChangeText={(texto) => setcontrasena(texto)}
 			/>
 
@@ -157,19 +154,19 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 
 			<Text style={styles.subtitulo}>Agrega una imagen</Text>
 
+			{image && <Image source={{ uri: image }} style={styles.image} />} 
+
 			<View style={styles.containerButtons}>
 				<TouchableOpacity style={styles.button} onPress={pickImage}>
 					<Text style={styles.buttonText}>Abrir galería</Text>
 				</TouchableOpacity>
-				{image && <Image source={{ uri: image }} style={styles.image} />}
 
 				<TouchableOpacity style={styles.button} onPress={takeImage}>
 					<Text style={styles.buttonText}>Tomar foto</Text>
 				</TouchableOpacity>
-				{image && <Image source={{ uri: image }} style={styles.image} />}
 			</View>
 
-			<View>
+			<View style={styles.saveButton}>
 				<Button
 					title='GUARDAR'
 					onPress={() => {
@@ -189,13 +186,13 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 					}}
 				/>
 			</View>
-		</View>
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		flexGrow: 1,
 		backgroundColor: '#fff',
 		padding: 15,
 	},
@@ -228,8 +225,8 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 	},
 	image: {
-		width: '95%',
-		height: 300,
+		width: '100%',
+		height: 200,
 		borderRadius: 10,
 		marginBottom: 20,
 	},
@@ -246,8 +243,11 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlign: 'center',
 	},
-	containerButtons:{
+	containerButtons: {
 		flexDirection: 'row',
 		justifyContent: 'space-around',
-	}
+	},
+	saveButton: {
+		marginTop: 20,
+	},
 });

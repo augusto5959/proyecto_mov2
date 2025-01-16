@@ -219,20 +219,20 @@ const styles = StyleSheet.create({
   },
   t: {
     fontSize: 18,
-    color: '#2D87FF', // Azul llamativo pero amigable
+    color: '#2D87FF', 
     textAlign: 'center',
-    marginVertical: 10, // Espaciado vertical para separar del resto del contenido
+    marginVertical: 10,
   },
   text: {
     fontStyle: 'italic',
     fontWeight: 'bold',
-    textDecorationLine: 'underline', // Subrayado para indicar interacción
-    letterSpacing: 0.5, // Espaciado entre letras para mejor legibilidad
+    textDecorationLine: 'underline', 
+    letterSpacing: 0.5, 
  
   },
-  // Añade este estilo dinámico al presionar el botón
+
   textPress: {
-    color: '#0B5ACC', // Oscurece el azul al hacer clic
+    color: '#0B5ACC', 
   }, container2: {
     backgroundColor: 'rgba(51, 56, 61, 0.8)',
     flex: 1,

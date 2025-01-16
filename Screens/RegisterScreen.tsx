@@ -17,9 +17,9 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import * as ImagePicker from 'expo-image-picker';
 
 import * as FileSystem from 'expo-file-system';
-import { Buffer } from 'buffer';//importar e instalar npm install buffer
-import axios from 'axios';// importar e intalar axios npm intall axios
-//import { token } from '../config/secrets';
+import { Buffer } from 'buffer'; // importar e instalar npm install buffer
+import axios from 'axios'; // importar e instalar npm install axios
+import { token } from '../config/secrets'; // Token para acceder a Dropbox
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
@@ -32,6 +32,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [contrasena, setcontrasena] = useState('');
 	const [image, setImage] = useState<string | null>(null);
 
+	// Seleccionar imagen desde galería
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -45,6 +46,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		}
 	};
 
+	// Tomar foto con la cámara
 	const takeImage = async () => {
 		let result = await ImagePicker.launchCameraAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -58,16 +60,18 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		}
 	};
 
+	// Registro en Firebase Auth
 	function register() {
 		createUserWithEmailAndPassword(auth, correo, contrasena)
 			.then((userCredential) => {
 				const user = userCredential.user;
 			})
 			.catch((error) => {
-				const errorMessage = error.message;
+				console.error(error.message);
 			});
 	}
 
+	// Guardar datos en Firebase Database
 	function guardar() {
 		set(ref(db, 'usuarios/' + cedula), {
 			name: nombre,
@@ -81,6 +85,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		limpiar();
 	}
 
+	// Limpiar formularios
 	function limpiar() {
 		setCedula('');
 		setNombre('');
@@ -93,16 +98,14 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 		setImage(null);
 	}
 
-	////////////////////////////////////
-
-	// Subir imagen a Dropbox y obtener el enlace de la imagen
-	const subirImagen = async (nombre: String) => {
+	// Subir imagen a Dropbox y obtener el enlace
+	const subirImagen = async (nombre: string) => {
 		if (!image) {
 			Alert.alert('Error', 'Primero selecciona una imagen');
 			return;
 		}
 
-		const ACCESS_TOKEN = token; // Token válido de Dropbox
+		const ACCESS_TOKEN = token;
 
 		try {
 			// Leer el archivo local como Base64
@@ -111,11 +114,14 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 			});
 
 			// Convertir Base64 a binario
-			const fileBuffer = Buffer.from(fileData, 'base64'); // Utiliza Buffer importado
+			const fileBuffer = Buffer.from(fileData, 'base64');
+
+			// Asegurar que el nombre tenga la extensión .jpg
+			const fileName = nombre.endsWith('.jpg') ? nombre : `${nombre}.jpg`;
 
 			// Crear los argumentos para la API de Dropbox
 			const dropboxArg = {
-				path: `/${nombre}`, // Ruta donde se guardará el archivo
+				path: `/${fileName}`,
 				mode: 'add',
 				autorename: true,
 				mute: false,
@@ -131,79 +137,72 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 						'Dropbox-API-Arg': JSON.stringify(dropboxArg),
 						'Content-Type': 'application/octet-stream',
 					},
-				},
+				}
 			);
 
-			console.log('Dropbox response:', result.data);
-
-			// Después de la subida, obtener la URL de la imagen
+			// Obtener la URL de descarga
 			const filePath = result.data.path_display;
 
-			// Solicitar el enlace de descarga del archivo
+			// Crear enlace compartido
 			const sharedLinkResult = await axios.post(
 				'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings',
 				{
-					path: filePath, // Ruta del archivo
+					path: filePath,
 					settings: {
-						requested_visibility: 'public', // Hacer el enlace público
+						requested_visibility: 'public',
 					},
 				},
 				{
 					headers: {
 						Authorization: `Bearer ${ACCESS_TOKEN}`,
 					},
-				},
+				}
 			);
 
-			// Obtener la URL del enlace compartido
-			const downloadUrl = sharedLinkResult.data.url.replace('?dl=0', '?raw=1'); // Hacer que la URL sea de descarga directa
+			// Obtener el enlace de descarga directa
+			const downloadUrl = sharedLinkResult.data.url.replace('?dl=0', '?raw=1');
 
 			console.log('URL de descarga:', downloadUrl);
-			setImage(downloadUrl); // Guardar la URL de la imagen subida
+			setImage(downloadUrl);
 
 			Alert.alert('Éxito', 'Imagen subida correctamente a Dropbox');
 		} catch (error) {
-			console.error(
-				'Error al subir la imagen:',
-				error.response?.data || error.message,
-			);
+			console.error('Error al subir la imagen:', error.response?.data || error.message);
 			Alert.alert('Error', 'Hubo un problema al subir la imagen');
 		}
 	};
-
-	//////////////////////////////////////
 
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			<Text style={styles.title}>Registros</Text>
 
 			<TextInput
-				placeholder='Ingresar Cédula'
+				placeholder="Ingresar Cédula"
 				style={styles.inp}
 				value={cedula}
 				onChangeText={(texto) => setCedula(texto)}
 			/>
 			<TextInput
-				placeholder='Ingrese el Nombre'
+				placeholder="Ingrese el Nombre"
 				style={styles.inp}
 				value={nombre}
 				onChangeText={(texto) => setNombre(texto)}
 			/>
 			<TextInput
-				placeholder='Ingrese el Apellido'
+				placeholder="Ingrese el Apellido"
 				style={styles.inp}
 				value={apellido}
 				onChangeText={(texto) => setApellido(texto)}
 			/>
 			<TextInput
-				placeholder='Ingrese la Edad'
+				placeholder="Ingrese la Edad"
 				style={styles.inp}
 				value={edad?.toString()}
-				keyboardType='numeric'
+				keyboardType="numeric"
 				onChangeText={(texto) => setEdad(+texto)}
 			/>
 			<TextInput
-				placeholder='Ingrese contraseña'
+				placeholder="Ingrese contraseña"
 				style={styles.inp}
 				secureTextEntry
 				onChangeText={(texto) => setcontrasena(texto)}
@@ -216,15 +215,15 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 					style={styles.picker}
 					onValueChange={(itemValue) => setGenero(itemValue)}
 				>
-					<Picker.Item label='Seleccione...' value='' />
-					<Picker.Item label='Masculino' value='Masculino' />
-					<Picker.Item label='Femenino' value='Femenino' />
-					<Picker.Item label='Otro' value='Otro' />
+					<Picker.Item label="Seleccione..." value="" />
+					<Picker.Item label="Masculino" value="Masculino" />
+					<Picker.Item label="Femenino" value="Femenino" />
+					<Picker.Item label="Otro" value="Otro" />
 				</Picker>
 			</View>
 
 			<TextInput
-				placeholder='Ingrese el Correo Electrónico'
+				placeholder="Ingrese el Correo Electrónico"
 				style={styles.inp}
 				value={correo}
 				onChangeText={(texto) => setCorreo(texto)}
@@ -246,21 +245,36 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 
 			<View style={styles.saveButton}>
 				<Button
-					title='GUARDAR'
-					onPress={() => {
-						guardar();
-						register();
-						Alert.alert(
-							'Registro exitoso',
-							'¡Gracias por registrarte!',
-							[
-								{
-									text: 'Aceptar',
-									onPress: () => navigation.navigate('Welcome'),
-								},
-							],
-							{ cancelable: false },
-						);
+					title="GUARDAR"
+					onPress={async () => {
+						if (!cedula || !nombre || !apellido || !correo || !contrasena) {
+							Alert.alert('Error', 'Por favor, completa todos los campos requeridos.');
+							return;
+						}
+						if (!image) {
+							Alert.alert('Error', 'Debes seleccionar o tomar una imagen.');
+							return;
+						}
+
+						try {
+							await subirImagen(cedula); // Sube la imagen con formato .jpg
+							guardar(); // Guarda los datos en Firebase
+							register(); // Crea la cuenta en Firebase Auth
+							Alert.alert(
+								'Registro exitoso',
+								'¡Gracias por registrarte!',
+								[
+									{
+										text: 'Aceptar',
+										onPress: () => navigation.navigate('Welcome'),
+									},
+								],
+								{ cancelable: false }
+							);
+						} catch (error) {
+							Alert.alert('Error', 'Hubo un problema durante el registro. Inténtalo nuevamente.');
+							console.error(error);
+						}
 					}}
 				/>
 			</View>

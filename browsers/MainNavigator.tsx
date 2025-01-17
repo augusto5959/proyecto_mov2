@@ -51,7 +51,7 @@ function MyTabNavigator({ route }: { route: any }) {
 
 function MyStack() {
     return (
-        <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Welcome">
             <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />

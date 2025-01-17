@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Alert, Image } from 'react-native';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../config/Config';
 
@@ -29,7 +29,7 @@ export default function PerfilScreen({ route }: { route: any }) {
         } else {
           setUserData(null);
         }
-        setLoading(false); // Detener la carga
+        setLoading(false); 
       },
       (error) => {
         console.error('Error al leer los datos de Firebase:', error);
@@ -75,6 +75,17 @@ export default function PerfilScreen({ route }: { route: any }) {
       <Text style={styles.value}>{userData.gender}</Text>
       <Text style={styles.label}>Estado Civil:</Text>
       <Text style={styles.value}>{userData.state}</Text>
+  
+      
+      {userData.image && (
+        <>
+          <Text style={styles.label}>Imagen de perfil:</Text>
+          <Image
+            source={{ uri: userData.image }}
+            style={{ width: 150, height: 150, borderRadius: 75 }}
+          />
+        </>
+      )}
     </View>
   );
 }

@@ -232,7 +232,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 
 			<Text style={styles.subtitulo}>Agrega una imagen</Text>
 
-			{image && <Image source={{ uri: image }} style={styles.image} />}
+			
 
 			<View style={styles.containerButtons}>
 				<TouchableOpacity style={styles.button} onPress={pickImage}>
@@ -243,6 +243,10 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 					<Text style={styles.buttonText}>Tomar foto</Text>
 				</TouchableOpacity>
 			</View>
+
+			{image && <Image source={{ uri: image }} style={styles.image} />}
+
+			<Button title='Subir imagen' onPress={()=>subirImagen('imagen.jpg')} />
 
 			<View style={styles.saveButton}>
 				<Button

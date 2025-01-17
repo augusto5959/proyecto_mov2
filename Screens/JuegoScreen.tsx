@@ -13,10 +13,10 @@ type Insect = {
 };
 
 export default function JuegoScreen({ route }: { route: any }) {
-  const { email } = route.params; // Recibimos el correo desde los parámetros
+  const { email } = route.params; 
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [insects, setInsects] = useState<Insect[]>([]); // Tipo definido aquí
+  const [insects, setInsects] = useState<Insect[]>([]); 
   const [isGameActive, setIsGameActive] = useState(false);
 
   // Función para generar insectos en posiciones aleatorias
@@ -24,9 +24,9 @@ export default function JuegoScreen({ route }: { route: any }) {
     const insectsArray: Insect[] = [];
     for (let i = 0; i < 10; i++) {
       insectsArray.push({
-        id: `${Math.random()}`, // ID único
-        x: Math.random() * (width - 60), // Rango seguro en ancho
-        y: Math.random() * (height - 250), // Rango seguro en alto
+        id: `${Math.random()}`,
+        x: Math.random() * (width - 60), 
+        y: Math.random() * (height - 250),
       });
     }
     return insectsArray;

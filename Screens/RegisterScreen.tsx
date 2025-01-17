@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-	Button,
-	StyleSheet,
-	Text,
-	View,
-	TextInput,
-	Alert,
-	Image,
-	TouchableOpacity,
-	ScrollView,
+import {Button,StyleSheet,Text,View,TextInput,Alert,Image,TouchableOpacity,ScrollView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { getDatabase, ref, set } from 'firebase/database';
@@ -167,7 +158,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 
 			Alert.alert('Éxito', 'Imagen subida correctamente a Dropbox');
 		} catch (error) {
-			console.error('Error al subir la imagen:', error.response?.data || error.message);
+			//console.error('Error al subir la imagen:', error.response?.data || error.message);
 			Alert.alert('Error', 'Hubo un problema al subir la imagen');
 		}
 	};

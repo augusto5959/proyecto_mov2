@@ -9,25 +9,23 @@ type Score = {
 };
 
 export default function PuntuacionScreen({ route }: { route: any }) {
-  const { email } = route.params; // Recibimos el correo del usuario desde los parámetros
+  const { email } = route.params; 
   const [scores, setScores] = useState<Score[]>([]);
-  const [userName, setUserName] = useState<string>('Usuario'); // Estado para el nombre del usuario
+  const [userName, setUserName] = useState<string>('Usuario'); 
 
   useEffect(() => {
     if (email) {
-      // Referencia al nodo del usuario en Firebase
       const userRef = ref(db, `usuarios/${email.replace('.', '_')}`);
       const unsubscribe = onValue(
         userRef,
         (snapshot) => {
           const data = snapshot.val();
-          console.log('Datos del usuario:', data); // Log para depuración
+          console.log('Datos del usuario:', data);
 
           if (data) {
             // Actualizar el nombre del usuario
             setUserName(data.name || 'Usuario Desconocido');
 
-            // Obtener las puntuaciones
             const scoresList: Score[] = data.scores ? Object.values(data.scores) : [];
             setScores(scoresList);
           } else {
@@ -84,7 +82,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semitransparente para resaltar el contenido
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   scoreItem: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Fondo translúcido para los elementos
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', 
     padding: 15,
     marginVertical: 10,
     borderRadius: 15,

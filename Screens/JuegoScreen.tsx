@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-	StyleSheet,
-	Text,
-	View,
-	TouchableOpacity,
-	Alert,
-	Dimensions,
+import {StyleSheet,Text,View,TouchableOpacity,Alert,Dimensions,
 } from 'react-native';
 import { ref, push, update, remove } from 'firebase/database';
 import { db } from '../config/Config';
+import { Audio } from 'expo-av';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,7 +21,6 @@ export default function JuegoScreen({ route }: { route: any }) {
 	const [insects, setInsects] = useState<Insect[]>([]);
 	const [isGameActive, setIsGameActive] = useState(false);
 
-	// Función para generar insectos en posiciones aleatorias
 	const generateInsects = (): Insect[] => {
 		const insectsArray: Insect[] = [];
 		for (let i = 0; i < 10; i++) {
@@ -38,7 +33,6 @@ export default function JuegoScreen({ route }: { route: any }) {
 		return insectsArray;
 	};
 
-	// Función para mover insectos a nuevas posiciones
 	const moveInsects = () => {
 		setInsects((prevInsects) =>
 			prevInsects.map((insect) => ({
@@ -49,7 +43,6 @@ export default function JuegoScreen({ route }: { route: any }) {
 		);
 	};
 
-	// Temporizador para el tiempo restante
 	useEffect(() => {
 		if (timeLeft > 0) {
 			const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
@@ -61,22 +54,22 @@ export default function JuegoScreen({ route }: { route: any }) {
 		}
 	}, [timeLeft]);
 
-	// Mover insectos cada 3 segundos, incluso si el puntaje no es 10
+	
 	useEffect(() => {
 		if (isGameActive) {
-			const moveInterval = setInterval(moveInsects, 3000); // Mueve insectos cada 3 segundos
+			const moveInterval = setInterval(moveInsects, 3000); 
 			return () => clearInterval(moveInterval);
 		}
 	}, [isGameActive]);
 
-	// Regenerar insectos cuando se terminen y el juego siga activo
+
 	useEffect(() => {
 		if (insects.length === 0 && isGameActive) {
 			setInsects(generateInsects());
 		}
 	}, [insects, isGameActive]);
 
-	// Iniciar el juego
+
 	const startGame = () => {
 		setScore(0);
 		setTimeLeft(30);
@@ -91,14 +84,34 @@ export default function JuegoScreen({ route }: { route: any }) {
 		}
 	};
 
-	// Manejar la captura de insectos
-	const handleCatchInsect = (id: string) => {
-		if (!isGameActive) return;
-		setInsects((prev) => prev.filter((insect) => insect.id !== id));
-		setScore((prev) => prev + 1);
-	};
 
-	// Guardar puntaje en Firebase
+	const handleCatchInsect = async (id: string) => {
+    if (!isGameActive) return;
+  
+    try {
+   
+      const { sound } = await Audio.Sound.createAsync(
+        require('../assets/audio/aplartar.mp3')
+      );
+  
+    
+      await sound.playAsync();
+  
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          sound.unloadAsync();
+        }
+      });
+    } catch (error) {
+      console.error('Error al reproducir el sonido:', error);
+    }
+  
+    setInsects((prev) => prev.filter((insect) => insect.id !== id));
+    setScore((prev) => prev + 1);
+  };
+
+
 	const saveScoreToDatabase = async (finalScore: number) => {
 		try {
 			const scoresRef = ref(db, `usuarios/${email.replace('.', '_')}/scores`);

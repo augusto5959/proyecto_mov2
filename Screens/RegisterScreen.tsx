@@ -11,6 +11,9 @@ import { Buffer } from 'buffer';
 import axios from 'axios';
 import { token } from '../config/secrets';
 
+
+
+
 export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
 	const [nombre, setNombre] = useState('');
@@ -21,6 +24,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [estado, setEstado] = useState('');
 	const [contrasena, setContrasena] = useState('');
 	const [image, setImage] = useState<string | null>(null);
+
+
+
 
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({

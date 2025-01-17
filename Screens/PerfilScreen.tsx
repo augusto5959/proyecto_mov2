@@ -97,12 +97,12 @@ export default function PerfilScreen({
 		>
 			<View style={styles.overlay}>
 				{/* Aquí se carga la imagen desde la URL que se obtiene del registro */}
-				{userData.profileImage && (
-					<Image
-						source={{ uri: userData.profileImage }}
-						style={styles.profileImage}
-					/>
-				)}
+				{userData.profileImage && ( 
+  <Image
+    source={{ uri: userData.profileImage.replace('www.dropbox.com', 'dl.dropboxusercontent.com') }}
+    style={styles.profileImage}
+  />
+)}
 				<Text style={styles.title}>Perfil del Usuario</Text>
 				<Text style={styles.label}>Correo:</Text>
 				<Text style={styles.value}>{email}</Text>

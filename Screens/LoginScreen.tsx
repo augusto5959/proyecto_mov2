@@ -131,7 +131,7 @@ async function login() {
 					<Text style={styles.loginButtonText}>Iniciar Sesión</Text>
 				</TouchableOpacity>
 
-				<TouchableOpacity onPress={() => setVer(!ver)}>
+				<TouchableOpacity onPress={() => setver(!ver)}>
 					<Text style={[styles.t, styles.text]}>
 						Olvidaste la contraseña. Da click aquí
 					</Text>
@@ -149,7 +149,7 @@ async function login() {
 								placeholder='Ingresar correo'
 								style={styles.inp}
 								value={correoRestablecer}
-								onChangeText={setCorreoRestablecer}
+								onChangeText={setcorreoRestablecer}
 							/>
 
 							<TouchableOpacity style={styles.buttonPrimary} onPress={restablecer}>
@@ -158,7 +158,7 @@ async function login() {
 
 							<TouchableOpacity
 								style={styles.buttonSecondary}
-								onPress={() => setVer(!ver)}
+								onPress={() => setver(!ver)}
 							>
 								<Text style={styles.buttonText}>Cerrar</Text>
 							</TouchableOpacity>

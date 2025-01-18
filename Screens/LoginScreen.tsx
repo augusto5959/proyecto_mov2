@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import {
-	StyleSheet,
-	Text,
-	View,
-	TextInput,
-	TouchableOpacity,
-	Alert,
-	ImageBackground,
-	Button,
-	Modal,
-} from 'react-native';
+import {StyleSheet,Text,View,TextInput,TouchableOpacity,Alert,ImageBackground,Button,Modal,} from 'react-native';
 import { ref, get } from 'firebase/database';
 import { db } from '../config/Config';
 import { auth } from '../config/Config';
@@ -26,87 +16,87 @@ interface User {
 }
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [ver, setver] = useState(false)
-  const [correoRestablecer, setcorreoRestablecer] = useState('')
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [ver, setver] = useState(false)
+	const [correoRestablecer, setcorreoRestablecer] = useState('')
 
-  function restablecer() {
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        // Password reset email sent!
-        // ..
-        Alert.alert('Mensaje', 'Se ha enviado un mensaje a su correo :c')
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-        Alert.alert(errorCode, errorMessage)
-      });
+	function restablecer() {
+		sendPasswordResetEmail(auth, email)
+			.then(() => {
+				// Password reset email sent!
+				// ..
+				Alert.alert('Mensaje', 'Se ha enviado un mensaje a su correo :c')
+			})
+			.catch((error) => {
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				// ..
+				Alert.alert(errorCode, errorMessage)
+			});
 
-  }
+	}
 
-async function login() {
-    if (!email.trim()) {
-        Alert.alert('Error', 'Por favor, ingresa un correo electrónico.');
-        return;
-    }
-    if (!password.trim()) {
-        Alert.alert('Error', 'Por favor, ingresa una contraseña.');
-        return;
-    }
+	async function login() {
+		if (!email.trim()) {
+			Alert.alert('Error', 'Por favor, ingresa un correo electrónico.');
+			return;
+		}
+		if (!password.trim()) {
+			Alert.alert('Error', 'Por favor, ingresa una contraseña.');
+			return;
+		}
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+		try {
+			const userCredential = await signInWithEmailAndPassword(auth, email, password);
+			const user = userCredential.user;
 
-        const usersRef = ref(db, 'usuarios');
-        const snapshot = await get(usersRef);
+			const usersRef = ref(db, 'usuarios');
+			const snapshot = await get(usersRef);
 
-        if (snapshot.exists()) {
-            const users: Record<string, User> = snapshot.val();
-            const foundUser = Object.values(users).find(
-                (u) => u.email === email
-            );
+			if (snapshot.exists()) {
+				const users: Record<string, User> = snapshot.val();
+				const foundUser = Object.values(users).find(
+					(u) => u.email === email
+				);
 
-            if (foundUser) {
-                Alert.alert('Bienvenido', `¡Inicio de sesión exitoso, ${foundUser.name}!`);
-                navigation.navigate('MainTabs', { email });
-            } else {
-                Alert.alert('Error', 'Usuario no encontrado en la base de datos.');
-            }
-        } else {
-            Alert.alert('Error', 'No se encontraron usuarios en la base de datos.');
-        }
-    } catch (error: any) {
-        const errorCode = error.code;
+				if (foundUser) {
+					Alert.alert('Bienvenido', `¡Inicio de sesión exitoso, ${foundUser.name}!`);
+					navigation.navigate('MainTabs', { email });
+				} else {
+					Alert.alert('Error', 'Usuario no encontrado en la base de datos.');
+				}
+			} else {
+				Alert.alert('Error', 'No se encontraron usuarios en la base de datos.');
+			}
+		} catch (error: any) {
+			const errorCode = error.code;
 
-        let titulo = 'ERROR';
-        let mensaje = 'Ocurrió un problema al iniciar sesión.';
+			let titulo = 'ERROR';
+			let mensaje = 'Ocurrió un problema al iniciar sesión.';
 
-        switch (errorCode) {
-            case 'auth/wrong-password':
-                titulo = 'Error de contraseña';
-                mensaje = 'Contraseña incorrecta';
-                break;
-            case 'auth/user-not-found':
-                titulo = 'Usuario no encontrado';
-                mensaje = 'Por favor verifica el correo ingresado.';
-                break;
-        }
+			switch (errorCode) {
+				case 'auth/wrong-password':
+					titulo = 'Error de contraseña';
+					mensaje = 'Contraseña incorrecta';
+					break;
+				case 'auth/user-not-found':
+					titulo = 'Usuario no encontrado';
+					mensaje = 'Por favor verifica el correo ingresado.';
+					break;
+			}
 
-        Alert.alert(titulo, mensaje);
-    }
-}
+			Alert.alert(titulo, mensaje);
+		}
+	}
 
-  return (
-    <ImageBackground
-      source={{ uri: 'https://play-lh.googleusercontent.com/To_MH2kz7JdtRLC3fkVSY50Rbn0ekyUCGwDEkfZETmuh24qVI3cmVExrfBBkaUgMd54=w526-h296-rw' }}
-      style={styles.backgroundImage}
-    >
-      <View style={styles.container}>
-        <Text style={styles.title}>Iniciar Sesión</Text>
+	return (
+		<ImageBackground
+			source={{ uri: 'https://play-lh.googleusercontent.com/To_MH2kz7JdtRLC3fkVSY50Rbn0ekyUCGwDEkfZETmuh24qVI3cmVExrfBBkaUgMd54=w526-h296-rw' }}
+			style={styles.backgroundImage}
+		>
+			<View style={styles.container}>
+				<Text style={styles.title}>Iniciar Sesión</Text>
 
 				<TextInput
 					placeholder='Correo Electrónico'

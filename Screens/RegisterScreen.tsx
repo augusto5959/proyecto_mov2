@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-	Button,
-	StyleSheet,
-	Text,
-	View,
-	TextInput,
-	Alert,
-	Image,
-	TouchableOpacity,
-	ScrollView,
+import {Button,StyleSheet,Text,View,TextInput,Alert,Image,TouchableOpacity,ScrollView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { ref, set } from 'firebase/database';
@@ -20,6 +11,9 @@ import { Buffer } from 'buffer';
 import axios from 'axios';
 import { token } from '../config/secrets';
 
+
+
+
 export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [cedula, setCedula] = useState('');
 	const [nombre, setNombre] = useState('');
@@ -30,6 +24,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 	const [estado, setEstado] = useState('');
 	const [contrasena, setContrasena] = useState('');
 	const [image, setImage] = useState<string | null>(null);
+
+
+
 
 	const pickImage = async () => {
 		let result = await ImagePicker.launchImageLibraryAsync({

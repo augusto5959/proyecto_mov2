@@ -36,4 +36,5 @@ yarn-error.*
 *.tsbuildinfo
 
 
+#secrets
 secrets.tsx

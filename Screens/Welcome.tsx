@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import React from 'react';
-
+import { Audio } from 'expo-av';
 export default function Welcome({ navigation }: any) {
+    
     return (
         <ImageBackground
             source={{ uri: 'https://play-lh.googleusercontent.com/To_MH2kz7JdtRLC3fkVSY50Rbn0ekyUCGwDEkfZETmuh24qVI3cmVExrfBBkaUgMd54=w526-h296-rw' }}
